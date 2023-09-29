@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Upload and Prompt</title>
+</head>
+<body>
+    <h1>PDF Upload and Prompt</h1>
+
+    <!-- PDF Upload Form -->
+    <h2>Upload PDF</h2>
+    <form id="pdfUploadForm" enctype="multipart/form-data">
+        <input type="file" name="pdf" accept=".pdf">
+        <button type="submit">Upload PDF</button>
+    </form>
+
+    <!-- Prompt Input Form -->
+    <h2>Enter Prompt</h2>
+    <form id="promptForm">
+        <input type="text" id="promptInput" placeholder="Enter your prompt">
+        <button type="submit">Generate Response</button>
+    </form>
+
+    <!-- Display Response -->
+    <div id="response"></div>
+
+    <script>
+        // Function to handle PDF upload
+        document.getElementById('pdfUploadForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('https://19d1-34-90-207-81.ngrok-free.app/upload_pdf', {
+                method: 'POST',
+                headers: {
+                    'ngrok-skip-browser-warning': 'xxxx',
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        });
+
+        // Function to handle prompt submission
+        document.getElementById('promptForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const prompt = document.getElementById('promptInput').value;
+
+            fetch('https://19d1-34-90-207-81.ngrok-free.app/generate_response', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'xxxx',
+                },
+                body: JSON.stringify({ prompt }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseElement = document.getElementById('response');
+                responseElement.innerHTML = `<p>${data.response}</p>`;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
