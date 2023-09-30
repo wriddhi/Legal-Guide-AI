@@ -12,7 +12,7 @@ type SignInProps = {
 
 const Spinner = () => (
   <svg
-    className="animate-spin -ml-1 mr-3 h-5 w-5 text-primary"
+    className="animate-spin -ml-1 mr-3 h-5 w-5 text-background"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
@@ -63,8 +63,8 @@ const SignIn = ({ calbackUrl = "/" }: SignInProps) => {
         <button
           disabled={loading}
           className={`flex justify-evenly items-center gap-4 ${
-            loading ? " bg-popover cursor-wait" : "bg-primary cursor-pointer"
-          }  text-primary font-medium px-6 py-2 mx-auto md:ml-0 transition-all`}
+            loading ? "cursor-wait" : "cursor-pointer"
+          } bg-primary text-background font-medium px-6 py-2 mx-auto md:ml-0 transition-all`}
         >
           <FcGoogle /> Sign In with Google {loading && <Spinner />}
         </button>
