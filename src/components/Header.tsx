@@ -20,8 +20,8 @@ const Header = ({ session }: { session: Session | null }) => {
   const pathname = usePathname();
 
   return (
-    <header className="w-full sticky top-0 z-10 flex outline outline-1 outline-muted justify-between items-center backdrop-blur dark:bg-black/30 gap-10 px-12 py-2">
-      <Link className="text-2xl font-mono font-bold" href="/">
+    <header className="w-full sticky top-0 z-10 flex outline outline-1 outline-muted justify-between items-center backdrop-blur dark:bg-black/30 gap-4 lg:gap-10 px-4 lg:px-12 py-2">
+      <Link className="text-xl lg:text-2xl font-mono font-bold" href="/">
         LegalGuide AI
       </Link>
       {session && session.user ? (

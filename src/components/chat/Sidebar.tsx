@@ -1,27 +1,14 @@
 "use client";
 
-import { Chat } from "@/types";
+import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useRef } from "react";
-
-import { TbEditCircle } from "react-icons/tb";
-
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Edit } from "@/components/chat/Edit";
+import { Chat } from "@/types";
 
 const Spinner = () => (
   <svg
-    className="animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+    className="animate-spin -ml-1 mr-3 h-5 w-5 text-background"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
@@ -42,82 +29,29 @@ const Spinner = () => (
   </svg>
 );
 
-
-export function Edit({ title, id }: { title: string; id: string }) {
-
-  const [input, setInput] = React.useState<string>(title);
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const closeRef = useRef<HTMLButtonElement>(null);
+const Sidebar = ({ chats }: { chats: Chat[] | null }) => {
+  const pathname = usePathname().split("/")[2];
   const router = useRouter();
 
-  const saveChanges = async () => {
-    if (input.trim().length === 0) {
-      alert("Please enter a title");
-      return;
-    }
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+  const handleNewChat = async () => {
     setIsLoading(true);
+
     const res = await fetch("/api/chat", {
-      method: "PUT",
-      body: JSON.stringify({
-        chat_id: id,
-        title: input,
-      }),
+      method: "POST",
     });
 
-    const data = await res.json();
+    const { id } = (await res.json()) as { id: string };
 
-    if (data.error) {
-      alert(data.error);
-      return;
-    }
     setIsLoading(false);
-    router.refresh();
-    closeRef.current?.click();
+    router.push(`/chat/${id}`);
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button ref={closeRef} className="w-fit h-fit ml-auto p-2" variant="outline" title="Edit Title">
-          <TbEditCircle />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit title</DialogTitle>
-          <DialogDescription>
-            Make changes to your chat title here. Click save when you&apos;re done.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="Title" className="text-right">
-              Title
-            </label>
-            <Input
-              id="Title"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button className="disabled:cursor-wait flex items-center gap-3" disabled={isLoading} onClick={saveChanges} type="submit">
-            {isLoading ? "Saving" : "Save"} changes {isLoading && <Spinner />}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-const Sidebar = ({ chats }: { chats: Chat[] | null }) => {
-  const pathname = usePathname().split("/")[2];
-  return (
     <aside className="w-64 h-screen bg-popover outline outline-1 outline-muted flex flex-col gap-4 justify-start items-center p-4">
-      <button className="bg-primary text-primary-foreground px-4 py-1 w-full rounded-md">
-        New chat +
+      <button onClick={handleNewChat} disabled={isLoading} className="bg-primary text-primary-foreground flex justify-between disabled:cursor-not-allowed px-4 py-2 w-full rounded-md">
+        Create New chat + {isLoading && <Spinner />}
       </button>
       {chats ? (
         <ul className="w-full flex flex-col gap-2">

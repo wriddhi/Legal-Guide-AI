@@ -63,6 +63,7 @@
   color: hsl(var(---primary));
   animation: paddles 0.75s ease-out infinite;
 }
+
 .loader:before {
   content: "";
   position: absolute;
@@ -82,6 +83,7 @@
   50% { box-shadow: -25px 8px, 25px -10px }
   100% { box-shadow: -25px -10px, 25px 10px}
 }
+
 @keyframes ballbounce {
   0% { transform: translateX(-20px) scale(1, 1.2) }
   25% { transform: scale(1.2, 1) }
