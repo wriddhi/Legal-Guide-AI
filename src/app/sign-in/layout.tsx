@@ -6,14 +6,14 @@ export const metadata: Metadata = {
     "An AI-powered legal guide chatbot for startups and small businesses",
 };
 
-export default function RootLayout({
+export default function Layout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
+    <>
+      {children}
+    </>
   )
 }
