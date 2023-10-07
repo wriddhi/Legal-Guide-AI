@@ -34,12 +34,12 @@ export default async function page({ params }: { params: { id: string } }) {
   const history = data.filter((chat) => chat.id === params.id)[0];
 
   if(!history) {
-    redirect("/chat");
+    redirect("/dashboard/chat");
   }
 
   return (
-    <div className="w-full max-h-[92.5vh] grid grid-cols-[1fr_3fr_3fr] grid-rows-1 divide-x-2 overflow-hidden">
-      <Sidebar chats={data} />
+    <div className="w-full max-h-[92.5vh] grid grid-cols-[1fr_2fr_3fr] grid-rows-1 divide-x-2 overflow-hidden">
+      <Sidebar chats={data.sort((a,b) => b.created_at - a.created_at)} />
       <Document chat={history} session={session} />
       <ChatUI title={history.title} session={session} history={history.history} />
     </div>

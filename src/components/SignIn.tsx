@@ -33,8 +33,6 @@ const Spinner = () => (
   </svg>
 );
 
-const wait = (ms: number) => new Promise((res) => setTimeout(res, ms));
-
 const SignIn = ({ calbackUrl = "/" }: SignInProps) => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const { theme } = useTheme();
@@ -43,7 +41,6 @@ const SignIn = ({ calbackUrl = "/" }: SignInProps) => {
     setLoading(true);
     e.preventDefault();
     await signIn("google");
-    // await wait(1000);
     setLoading(false);
   };
 

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
   if (error) {
     return NextResponse.json(
-      { error: "Could not upload file to server" },
+      { error: "Could not upload file to server", data: null },
       { status: 500 }
     );
   }
@@ -47,8 +47,8 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (updateError) {
-    return NextResponse.json({ error: "Could not update chat", status: 500 });
+    return NextResponse.json({ error: "Could not update chat", data: null, status: 500 });
   }
 
-  return NextResponse.json({ data: "Uploaded successfully" });
+  return NextResponse.json({ data: "Uploaded successfully", error: null });
 }

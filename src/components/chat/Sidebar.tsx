@@ -29,8 +29,9 @@ const Spinner = () => (
   </svg>
 );
 
-const Sidebar = ({ chats }: { chats: Chat[] | null }) => {
-  const pathname = usePathname().split("/")[2];
+const Sidebar = ({ chats }: { chats: Chat[] }) => {
+
+  const pathname = usePathname().split("/")[3];
   const router = useRouter();
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -45,14 +46,18 @@ const Sidebar = ({ chats }: { chats: Chat[] | null }) => {
     const { id } = (await res.json()) as { id: string };
 
     setIsLoading(false);
-    router.push(`/chat/${id}`);
+    router.push(`/dashboard/chat/${id}`);
   };
 
   return (
     <aside className="w-64 h-screen bg-popover outline outline-1 outline-muted flex flex-col gap-4 justify-start items-center p-4">
-      <button onClick={handleNewChat} disabled={isLoading} className="bg-primary text-primary-foreground flex justify-between disabled:cursor-not-allowed px-4 py-2 w-full rounded-md">
-        Create New chat + {isLoading && <Spinner />}
-      </button>
+      {chats.length <= 6 && <button
+        onClick={handleNewChat}
+        disabled={isLoading}
+        className="bg-primary text-primary-foreground disabled:bg-muted-foreground flex justify-center gap-3 disabled:cursor-not-allowed px-4 py-2 w-full rounded-md"
+      >
+        {isLoading ? "Creating" : "Create"} a new chat + {isLoading && <Spinner />}
+      </button>}
       {chats ? (
         <ul className="w-full flex flex-col gap-2">
           {chats.map((chat) => (
@@ -65,7 +70,7 @@ const Sidebar = ({ chats }: { chats: Chat[] | null }) => {
                     : "text-muted-foreground"
                 }`}
               >
-                <Link href={`/chat/${chat.id}`}>{chat.title}</Link>{" "}
+                <Link href={`/dashboard/chat/${chat.id}`}>{chat.title}</Link>{" "}
                 <Edit title={chat.title} id={chat.id} />
               </li>
             </React.Fragment>

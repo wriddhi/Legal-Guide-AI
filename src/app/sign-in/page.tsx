@@ -6,7 +6,7 @@ export default async function page() {
   const session = await getServerSession();
 
   if (session?.user) {
-    redirect("/chat");
+    redirect("/dashboard");
   }
 
   return <SignIn />;

@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import { SessionProvider } from "@/providers/session";
 import { getServerSession } from "next-auth";
 import { outfit, mono } from "@/lib/fonts";
+import { Toaster } from "@/components/ui/toaster"
 
 
 export const metadata: Metadata = {
@@ -57,6 +58,7 @@ export default async function RootLayout({
             <Header session={session} />
             {children}
           </ThemeProvider>
+        <Toaster />
         </body>
       </SessionProvider>
     </html>

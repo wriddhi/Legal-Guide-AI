@@ -28,13 +28,15 @@ export default async function page() {
     throw error;
   }
 
+  const sortedChat = data.sort((a, b) => a.created_at - b.created_at);
+
   return (
-    <div className="w-full h-full flex flex-col lg:grid lg:grid-cols-3 p-4 lg:p-20 gap-4 lg:gap-20">
+    <div className="w-full h-full flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 p-4 lg:p-20 gap-4 lg:gap-20">
       <h1 className="col-span-3 text-3xl font-bold">
         Your conversations <span  className="text-muted-foreground font-mono font-light tracking-tighter text-2xl"> {`(${data.length}/6)`} </span>
       </h1>
-      {data.length !== 6 && <New />}
-      {data.map((chat) => (
+      {sortedChat.length !== 6 && <New />}
+      {sortedChat.map((chat) => (
         <Card
           key={chat.id}
           href={`chat/${chat.id}`}

@@ -61,7 +61,6 @@ export function Edit({
 
   const saveChanges = async () => {
     if (input.trim().length === 0) {
-      alert("Please enter a title");
       return;
     }
     setIsSaving(true);
@@ -108,6 +107,7 @@ export function Edit({
     <Dialog>
       <DialogTrigger asChild>
         <Button
+          onClick={(e) => e.stopPropagation()}
           ref={closeRef}
           className={cn("w-fit h-fit ml-auto p-2", className)}
           variant="outline"

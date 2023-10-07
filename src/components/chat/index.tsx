@@ -1,15 +1,45 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { Session } from "next-auth";
 import Prompt from "./Input";
 import { Message } from "@/types";
-import { Session } from "next-auth";
-import Image from "next/image";
-import { getFormattedDateTime } from "@/lib/utils";
-import { PiCopyThin } from "react-icons/pi";
+import { chat, getFormattedDateTime } from "@/lib/utils";
+
+import { PiCopyBold } from "react-icons/pi";
 import { SiOpenai } from "react-icons/si";
 import { AiOutlineUser } from "react-icons/ai";
 import { MdOutlineVerticalAlignTop } from "react-icons/md";
+import { BsCheck2Circle } from "react-icons/bs";
+
+const CopyBtn = ({ message }: { message: string }) => {
+  const [copied, setCopied] = useState<boolean>(false);
+
+  const copyToClipboard = (text: string) => () => {
+    console.log("Copying to clipboard => ", text);
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+  };
+
+  useEffect(() => {
+    if (copied) {
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    }
+  }, [copied]);
+
+  return (
+    <button
+      onClick={copyToClipboard(message)}
+      title="Copy to clipboard"
+      className="text-primary/90 active:text-primary"
+    >
+      {!copied ? <PiCopyBold /> : <BsCheck2Circle className="text-green-500" />}
+    </button>
+  );
+};
 
 const ChatUI = ({
   title,
@@ -24,29 +54,34 @@ const ChatUI = ({
   const [prompt, setPrompt] = React.useState<string>("");
   const [chatHistory, setChatHistory] = React.useState<Message[]>(history);
 
-  const [showScrollUpButton, setShowScrollUpButton] = React.useState<boolean>(true);
-  const [showScrollDownButton, setShowScrollDownButton] = React.useState<boolean>(true);
+  const [showScrollUpButton, setShowScrollUpButton] =
+    React.useState<boolean>(true);
+  const [showScrollDownButton, setShowScrollDownButton] =
+    React.useState<boolean>(true);
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const copyToClipboard = (text: string) => () => {
-    console.log("Copying to clipboard => ", text);
-    navigator.clipboard.writeText(text);
-  };
-
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (prompt.trim().length === 0) {
-      alert("Please enter a message");
       return;
     }
+
+    setPrompt("");
+
     console.log("Sending message => ", prompt);
+
     const newMessage: Message = {
       message: prompt,
       role: "user",
       timestamp: Date.now(),
     };
     setChatHistory([...chatHistory, newMessage]);
-    setPrompt("");
+    const res = await chat(prompt);
+    setChatHistory([
+      ...chatHistory,
+      newMessage,
+      { role: "system", message: res, timestamp: Date.now() },
+    ]);
   };
 
   const handleScroll = () => {
@@ -60,9 +95,16 @@ const ChatUI = ({
   const scrollToTop = () => {
     ref.current?.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
+
+  const scrollToBottom = () => {
+    ref.current?.scrollTo({
+      top: ref.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }
 
   useEffect(() => {
     ref.current?.addEventListener("scroll", handleScroll);
@@ -74,7 +116,7 @@ const ChatUI = ({
   return (
     <main
       ref={ref}
-      className="flex flex-1 flex-col gap-3 w-full overflow-y-auto p-10 transform-none divide-y relative"
+      className="flex flex-1 flex-col gap-3 w-full overflow-y-auto p-10 mb-20 transform-none divide-y relative"
     >
       <h2 className="mb-4 text-xl font-semibold">{title}</h2>
       {chatHistory.length === 0 && (
@@ -115,21 +157,22 @@ const ChatUI = ({
             <time className="text-muted-foreground text-sm font-light">
               {getFormattedDateTime(message.timestamp).time}
             </time>
-            <button
-              onClick={copyToClipboard(message.message)}
-              title="Copy to clipboard"
-            >
-              <PiCopyThin className="text-primary" />
-            </button>
+            <CopyBtn message={message.message} />
           </span>
           <pre className="text-muted-foreground font-sans flex-wrap  overflow-x-auto">
             {message.message}
           </pre>
         </div>
       ))}
-      {showScrollUpButton && <button title="Scroll to Top" onClick={scrollToTop} className="fixed bottom-28 right-10 rounded-full outline bg-muted outline-border p-3">
-        <MdOutlineVerticalAlignTop />
-      </button>}
+      {showScrollUpButton && (
+        <button
+          title="Scroll to Top"
+          onClick={scrollToTop}
+          className="fixed bottom-24 right-5 rounded-full outline bg-muted outline-border p-3"
+        >
+          <MdOutlineVerticalAlignTop />
+        </button>
+      )}
       <Prompt prompt={prompt} setPrompt={setPrompt} sendMessage={sendMessage} />
     </main>
   );
