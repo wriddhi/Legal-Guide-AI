@@ -29,9 +29,10 @@ const Spinner = () => (
   </svg>
 );
 
-const Sidebar = ({ chats }: { chats: Chat[] }) => {
+const Sidebar = ({ chats, title="chat" }: { chats: Chat[], title?: "chat" | "summary" }) => {
 
-  const pathname = usePathname().split("/")[3];
+  const slug = usePathname().split("/")[3];
+  const pathname = usePathname().split("/")[2];
   const router = useRouter();
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -46,7 +47,7 @@ const Sidebar = ({ chats }: { chats: Chat[] }) => {
     const { id } = (await res.json()) as { id: string };
 
     setIsLoading(false);
-    router.push(`/dashboard/chat/${id}`);
+    router.push(`/dashboard/${title}/${id}`);
   };
 
   return (
@@ -56,7 +57,7 @@ const Sidebar = ({ chats }: { chats: Chat[] }) => {
         disabled={isLoading}
         className="bg-primary text-primary-foreground disabled:bg-muted-foreground flex justify-center gap-3 disabled:cursor-not-allowed px-4 py-2 w-full rounded-md"
       >
-        {isLoading ? "Creating" : "Create"} a new chat + {isLoading && <Spinner />}
+        {isLoading ? "Creating" : "Create"} a new {title} + {isLoading && <Spinner />}
       </button>}
       {chats ? (
         <ul className="w-full flex flex-col gap-2">
@@ -65,19 +66,19 @@ const Sidebar = ({ chats }: { chats: Chat[] }) => {
               <hr />
               <li
                 className={`w-full px-2 py-1 flex justify-start items-center ${
-                  pathname === chat.id
+                  slug === chat.id
                     ? "border-solid border-0 border-l-4 border-primary text-primary"
                     : "text-muted-foreground"
                 }`}
               >
-                <Link href={`/dashboard/chat/${chat.id}`}>{chat.title}</Link>{" "}
+                <Link href={`/dashboard/${title}/${chat.id}`}>{chat.title === "New Chat" ? pathname == "summary" ? "New Summary" : chat.title : chat.title}</Link>{" "}
                 <Edit title={chat.title} id={chat.id} />
               </li>
             </React.Fragment>
           ))}
         </ul>
       ) : (
-        <p className="text-primary-foreground">No chats</p>
+        <p className="text-primary-foreground">No {title}</p>
       )}
     </aside>
   );

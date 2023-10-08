@@ -12,6 +12,7 @@ import { SiOpenai } from "react-icons/si";
 import { AiOutlineUser } from "react-icons/ai";
 import { MdOutlineVerticalAlignTop } from "react-icons/md";
 import { BsCheck2Circle } from "react-icons/bs";
+import { usePathname } from "next/navigation";
 
 const CopyBtn = ({ message }: { message: string }) => {
   const [copied, setCopied] = useState<boolean>(false);
@@ -61,10 +62,13 @@ const ChatUI = ({
 
   const ref = useRef<HTMLDivElement>(null);
 
+  const pathname = usePathname().split("/")[2];
+
   const sendMessage = async () => {
     if (prompt.trim().length === 0) {
       return;
     }
+
 
     setPrompt("");
 
@@ -118,7 +122,7 @@ const ChatUI = ({
       ref={ref}
       className="flex flex-1 flex-col gap-3 w-full overflow-y-auto p-10 mb-20 transform-none divide-y relative"
     >
-      <h2 className="mb-4 text-xl font-semibold">{title}</h2>
+      <h2 className="mb-4 text-xl font-semibold">{title === "New Chat" ? pathname == "summary" ? "New Summary" : title : title}</h2>
       {chatHistory.length === 0 && (
         <p className="p-4 text-center w-full text-muted-foreground">
           No conversation history

@@ -49,12 +49,12 @@ export default function Dashboard() {
       href: "/dashboard/generate",
     },
     {
-      title: "Summarize",
+      title: "Summary",
       description: "Summarize your legal documents to understand them better with our AI.",
       icon: (
         <TbTextRecognition className="scale-125 group-hover:scale-150 group-focus:scale-150 transition-all" />
       ),
-      href: "/dashboard/summarize",
+      href: "/dashboard/summary",
     }
   ];
 

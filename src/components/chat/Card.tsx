@@ -4,10 +4,10 @@ import React from "react";
 import { getFormattedDateTime } from "@/lib/utils";
 import Link from "next/link";
 import { TbMessage2Plus } from "react-icons/tb";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Edit } from "./Edit";
 
-export const New = () => {
+export const New = ({option} : {option: "chat" | "summary"}) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const router = useRouter();
 
@@ -24,7 +24,7 @@ export const New = () => {
 
   return (
     <button
-      title="Create a new chat"
+      title={`Create a new ${option}`}
       onClick={handleNewChat}
       disabled={isLoading}
       className={`${
@@ -36,7 +36,7 @@ export const New = () => {
       </span>
       <div className="text-right">
         <h3 className="font-bold">
-          + {isLoading ? "Creating" : "Create"} a New Chat
+          + {isLoading ? "Creating" : "Create"} a New {option}
         </h3>
         <p>{isLoading ? "Starting" : "Start"} a new conversation</p>
         {isLoading && <p>Please wait . . .</p>}
@@ -56,6 +56,8 @@ export const Card = ({
 }) => {
   const { date, time } = getFormattedDateTime(created_at);
 
+  const pathname = usePathname().split("/")[2];
+
   return (
     <div className="bg-primary text-primary-foreground outline-1 outline-ring w-full p-10 rounded-2xl flex justify-between items-center relative">
       <span className="bg-[conic-gradient(at_left,_var(--tw-gradient-stops))] from-orange-500 via-purple-500 to-blue-500 w-16 h-16 rounded-full"></span>
@@ -66,7 +68,7 @@ export const Card = ({
           id={href.split("/")[1]}
         />
         <Link href={href}>
-          <h3 className="font-bold">{title}</h3>
+          <h3 className="font-bold">{title === "New Chat" ? pathname === "summary" ? "New Summary": title : title}</h3>
           <p>{date}</p>
           <p>{time.slice(0, -3)}</p>
         </Link>
